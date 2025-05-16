@@ -128,23 +128,32 @@ async def get_sheet_data(url):
         logging.error(f"Sheet error: {e}")
         return None
 
-@tree.command(name="update_all", description="Verify and store Google Sheet URL", guild=discord.Object(id=1209053585418223646))
+@tree.command(name="update_all", description="Verify and store Google Sheet URL")
 @discord.app_commands.describe(link="Google Sheet URL")
 async def update_all(interaction: discord.Interaction, link: str):
-    global sheet_url
-    if not coc_client:
-        await interaction.response.send_message("CoC API not initialized")
-        return
-    data = await get_sheet_data(link)
-    if data is None:
-        embed = discord.Embed(title="Error", description="Failed to access sheet", color=discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    sheet_url = link
-    embed = discord.Embed(title="Success", description=f"Sheet verified with {len(data)} rows", color=discord.Color.green())
-    embed.set_footer(text="CWL Balance Boss")
-    await interaction.response.send_message(embed=embed)
-    logging.info(f"Sheet verified: {link}")
+    await interaction.response.defer()
+
+    try:
+        global sheet_url
+        if not coc_client:
+            await interaction.followup.send("CoC API not initialized.")
+            return
+
+        data = await get_sheet_data(link)
+        if data is None:
+            embed = discord.Embed(title="Error", description="Failed to access sheet", color=discord.Color.red())
+            await interaction.followup.send(embed=embed)
+            return
+
+        sheet_url = link
+        embed = discord.Embed(title="Success", description=f"Sheet verified with {len(data)} rows", color=discord.Color.green())
+        embed.set_footer(text="CWL Balance Boss")
+        await interaction.followup.send(embed=embed)
+        logging.info(f"Sheet verified: {link}")
+
+    except Exception as e:
+        logging.exception("Error in update_all")
+        await interaction.followup.send(f"Error: {e}")
 
 @tree.command(name="profile", description="Show CoC accounts linked to a user", guild=discord.Object(id=1209053585418223646))
 @discord.app_commands.describe(user="User to check (defaults to you)")
@@ -278,6 +287,7 @@ async def main():
     try:
         logging.info("Starting bot...")
         await client.start(DISCORD_TOKEN)
+        await tree.sync()
     except Exception as e:
         logging.error(f"Bot start error: {e}")
 
