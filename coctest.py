@@ -287,7 +287,6 @@ async def main():
     try:
         logging.info("Starting bot...")
         await client.start(DISCORD_TOKEN)
-        await tree.sync()
     except Exception as e:
         logging.error(f"Bot start error: {e}")
 
