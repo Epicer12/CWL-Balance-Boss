@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import coc
 from dotenv import load_dotenv
 import os
@@ -146,7 +147,7 @@ async def update_all(ctx, *, link):
     await ctx.send(embed=embed)
     logging.info(f"Verified sheet with {len(data)} rows: {link}")
 
-@bot.command()
+@app_commands.command()
 async def profile(ctx, user: discord.User = None):
     """Show all CoC accounts linked to a Discord user."""
     if not coc_client:
@@ -189,7 +190,7 @@ async def profile(ctx, user: discord.User = None):
     embed.set_footer(text="CWL Balance Boss")
     await ctx.send(embed=embed)
 
-@bot.command()
+@app_commands.command()
 async def player(ctx, *, tag: str):
     """Show profile of a CoC account by tag."""
     if not coc_client:
@@ -286,7 +287,7 @@ async def player(ctx, *, tag: str):
         await ctx.send(embed=embed)
         logging.error(f"Failed to fetch player {tag}: {e}")
 
-@bot.command()
+@app_commands.command()
 async def claninfo(ctx, clan_tag):
     """Fetches clan info for a given clan tag (e.g., #XYZ123)"""
     if not coc_client:
