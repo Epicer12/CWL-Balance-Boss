@@ -1,6 +1,3 @@
-git config --global user.name "Hasun Tisera"
-git config --global user.email "hasuntissera12epicer@gmail.com"
-
 import discord
 from discord.ext import commands
 import coc
